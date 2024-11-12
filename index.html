@@ -136,8 +136,8 @@
                         500 Dongchuan Road, Shanghai 200241, China<br>
                         Room A811, Estuarine & Coastal Research Building<br>
                         Email: kcao@geo.ecnu.edu.cn</p>
-                        <br><div class="d-flex flex-row  justify-content-center">You are the  &nbsp;<div id="visitCount" class="d-flex align-items-center justify-content-center text-primary"></div> &nbsp; visitor to this webpage!</div>
-    
+                        <br><div class="d-flex flex-row  justify-content-center">There are  &nbsp;<div id="visit-counter">正在加载访问量...</div>&nbsp; visitors accessing to this webpage!</div>
+                        
                 </section>
                 <footer class="page__meta"></footer>
             </div>
@@ -150,70 +150,53 @@
         </footer>
     </div>
     <script src="https://gchenjiachen.github.io/CKK/js/main.min.js"></script>
-    <script> (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga'); ga('create', '', 'auto'); ga('send', 'pageview'); </script>
-    <script language=JavaScript>
-
-        var caution = false
-        function setCookie(name, value, expires, path, domain, secure) {
-            var curCookie = name + "=" + escape(value) +
-                ((expires) ? "; expires=" + expires.toGMTString() : "") +
-                ((path) ? "; path=" + path : "") +
-                ((domain) ? "; domain=" + domain : "") +
-                ((secure) ? "; secure" : "")
-            if (!caution || (name + "=" + escape(value)).length <= 4000)
-                document.cookie = curCookie
-            else
-                if (confirm("Cookie exceeds 4KB and will be cut!"))
-                    document.cookie = curCookie
-        }
-        function getCookie(name) {
-            var prefix = name + "="
-            var cookieStartIndex = document.cookie.indexOf(prefix)
-            if (cookieStartIndex == -1)
-                return null
-            var cookieEndIndex = document.cookie.indexOf(";", cookieStartIndex + prefix.length)
-            if (cookieEndIndex == -1)
-                cookieEndIndex = document.cookie.length
-            return unescape(document.cookie.substring(cookieStartIndex + prefix.length, cookieEndIndex))
-        }
-        function deleteCookie(name, path, domain) {
-            if (getCookie(name)) {
-                document.cookie = name + "=" +
-                    ((path) ? "; path=" + path : "") +
-                    ((domain) ? "; domain=" + domain : "") +
-                    "; expires=Thu, 01-Jan-70 00:00:01 GMT"
+    <script>
+        const GITHUB_TOKEN = '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'; // 替换为你的 GitHub Token
+        const REPO_OWNER = 'gchenjiachen'; // 替换为你的 GitHub 用户名
+        const REPO_NAME = 'visit-counter'; // 替换为你的仓库名
+        const ISSUE_NUMBER = 1; // 替换为你的 Issue 编号
+      
+        async function updateVisitCount() {
+          try {
+            // 获取 Issue 数据
+            const issueUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}`;
+            const response = await fetch(issueUrl, {
+              headers: {
+                Authorization: `token ${GITHUB_TOKEN}`,
+              },
+            });
+            const issueData = await response.json();
+            let visitCount = parseInt(issueData.body || '0', 10);
+      
+            // 更新访问量
+            visitCount++;
+            const updateResponse = await fetch(issueUrl, {
+              method: 'PATCH',
+              headers: {
+                Authorization: `token ${GITHUB_TOKEN}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                body: visitCount.toString(),
+              }),
+            });
+      
+            if (updateResponse.ok) {
+              document.getElementById('visit-counter').innerText = `${visitCount}`;
+            } else {
+              throw new Error('Failed to update visit count');
             }
+          } catch (error) {
+            console.error('Error updating visit count:', error);
+            document.getElementById('visit-counter').innerText = '无法加载访问量';
+          }
         }
-        function fixDate(date) {
-            var base = new Date(0)
-            var skew = base.getTime()
-            if (skew > 0)
-                date.setTime(date.getTime() - skew)
-        }
-        var now = new Date()
-        fixDate(now)
-        now.setTime(now.getTime() + 365 * 24 * 60 * 60 * 1000)
-        var visits = getCookie("counter")
-        if (!visits)
-            visits = 1
-        else
-            visits = parseInt(visits) + 1
-        setCookie("counter", visits, now)
-        // document.write("您是第" + visits + "位访问本专题的！")
-        if((visits)%10==1){
-        document.getElementById("visitCount").innerHTML= visits+" st ";
-       
-        }else if((visits)%10==2){
-            document.getElementById("visitCount").innerHTML= visits+" nd ";
-       
-        }else if((visits)%10==3){
-            document.getElementById("visitCount").innerHTML= visits+" rd ";
-       
-        }else{
-        document.getElementById("visitCount").innerHTML= visits +" th ";
-       }
-        // -->
-       </script>
+      
+        // 调用函数
+        updateVisitCount();
+      </script>
+    <script> (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga'); ga('create', '', 'auto'); ga('send', 'pageview'); </script>
+   
 </body>
 
 </html>
