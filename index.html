@@ -9,7 +9,7 @@
     <meta property="og:title" content="">
 
     <script
-        type="application/ld+json"> { "@context" : "http://schema.org", "@type" : "Person", "name" : "Kai Cao", "url" : "https://KaiCao.github.io", "sameAs" : null } </script>
+        type="application/ld+json"> { "@context" : "http://schema.org", "@type" : "Person", "name" : "Kai Cao", "url" : "https://github.com/gchenjiachen/CKK", "sameAs" : null } </script>
     <!-- end SEO -->
 
     <meta name="HandheldFriendly" content="True">
@@ -149,51 +149,22 @@
                 30/10/2024)</div>
         </footer>
     </div>
-    <script src="https://gchenjiachen.github.io/CKK/js/main.min.js"></script>
+    <script src="./js/main.min.js"></script>
+    <script src="./visit-counter.js"></script>
     <script>
-        const GITHUB_TOKEN = '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'; // 替换为你的 GitHub Token
-        const REPO_OWNER = 'gchenjiachen'; // 替换为你的 GitHub 用户名
-        const REPO_NAME = 'visit-counter'; // 替换为你的仓库名
-        const ISSUE_NUMBER = 1; // 替换为你的 Issue 编号
-      
-        async function updateVisitCount() {
-          try {
-            // 获取 Issue 数据
-            const issueUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}`;
-            const response = await fetch(issueUrl, {
-              headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-              },
-            });
-            const issueData = await response.json();
-            let visitCount = parseInt(issueData.body || '0', 10);
-      
-            // 更新访问量
-            visitCount++;
-            const updateResponse = await fetch(issueUrl, {
-              method: 'PATCH',
-              headers: {
-                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                body: visitCount.toString(),
-              }),
-            });
-      
-            if (updateResponse.ok) {
-              document.getElementById('visit-counter').innerText = `${visitCount}`;
-            } else {
-              throw new Error('Failed to update visit count');
-            }
-          } catch (error) {
-            console.error('Error updating visit count:', error);
-            document.getElementById('visit-counter').innerText = '无法加载访问量';
-          }
-        }
-      
-        // 调用函数
-        updateVisitCount();
+async function updateVisitCount() {
+    try {
+      const response = await fetch('https://your-site.netlify.app/.netlify/functions/visit-counter');
+      const data = await response.json();
+      document.getElementById('visit-counter').innerText = `本站访问量：${data.count}`;
+    } catch (error) {
+      console.error('Error updating visit count:', error);
+      document.getElementById('visit-counter').innerText = '无法加载访问量';
+    }
+  }
+
+  // 调用函数
+  updateVisitCount();
       </script>
     <script> (function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m) })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga'); ga('create', '', 'auto'); ga('send', 'pageview'); </script>
    
