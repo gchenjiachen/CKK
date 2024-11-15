@@ -1,4 +1,7 @@
-const fetch = require('node-fetch');  // 在 Lambda 环境中使用 node-fetch
+// 在 Node.js 中使用 fetch
+import fetch from 'node-fetch';
+
+//const fetch = require('node-fetch');  // 在 Lambda 环境中使用 node-fetch
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // 通过环境变量传递 GitHub Token
 const REPO_OWNER = 'gchenjiachen';  // GitHub 用户名
