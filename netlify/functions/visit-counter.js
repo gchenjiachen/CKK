@@ -1,3 +1,4 @@
+  console.log('Kaicao');
 const fetch = require('node-fetch');  // 正确引入 fetch
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // GitHub Token
