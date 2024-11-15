@@ -1,13 +1,14 @@
-const fetch = require('node-fetch'); // 仅在 Netlify Lambda 函数中使用
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // 环境变量
-const REPO_OWNER = 'gchenjiachen'; // 替换为 GitHub 用户名
-const REPO_NAME = 'visit-counter'; // 替换为 GitHub 仓库名
-const ISSUE_NUMBER = 1; // 替换为 GitHub Issue 编号
+const fetch = require('node-fetch');  // 在 Lambda 环境中使用 node-fetch
+
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // 通过环境变量传递 GitHub Token
+const REPO_OWNER = 'gchenjiachen';  // GitHub 用户名
+const REPO_NAME = 'visit-counter';  // GitHub 仓库名
+const ISSUE_NUMBER = 1;  // GitHub Issue 编号
 
 exports.handler = async function (event, context) {
   const issueUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}`;
   try {
-    // 获取访问量
+    // 获取当前访问量
     const response = await fetch(issueUrl, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
@@ -15,16 +16,15 @@ exports.handler = async function (event, context) {
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub API responded with status ${response.status}: ${await response.text()}`);
+      throw new Error(`GitHub API request failed with status ${response.status}`);
     }
 
     const issueData = await response.json();
     let visitCount = parseInt(issueData.body || '0', 10);
-    if (isNaN(visitCount)) visitCount = 0;
-    visitCount++; // 增加访问量
+    visitCount++;  // 增加访问量
 
     // 更新访问量
-    await fetch(issueUrl, {
+    const updateResponse = await fetch(issueUrl, {
       method: 'PATCH',
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
@@ -35,15 +35,19 @@ exports.handler = async function (event, context) {
       }),
     });
 
+    if (!updateResponse.ok) {
+      throw new Error(`Failed to update GitHub issue with status ${updateResponse.status}`);
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ count: visitCount }), // 返回当前访问量
+      body: JSON.stringify({ count: visitCount }),  // 返回更新后的访问量
     };
   } catch (error) {
-    console.error(error);
+    console.error('Error in visit-counter Lambda function:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to update visit count' }),
+      body: JSON.stringify({ error: `Failed to update visit count: ${error.message}` }),
     };
   }
 };
